@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: cave-a-vin
+  datasource:
+    url: jdbc:sqlserver://localhost;databaseName=CAVE_A_VIN;integratedSecurity=false;encrypt=false;trustServerCertificate=false
+    username: sa
+    password: Pa$$w0rd
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: update
