@@ -20,7 +20,7 @@ public class LignePanier {
     private Integer id;
 
     @Column(name= "QUANTITE" )
-    private Integer qte_commande;
+    private int qteCommande;
 
     @Column(name= "PRICE", precision = 2)
     private float prix;
