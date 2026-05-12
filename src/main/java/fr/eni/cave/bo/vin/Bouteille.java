@@ -22,13 +22,13 @@ public class Bouteille {
     @Column(name = "SPARKLING")
     private boolean petillant;
 
-    @Column(name = "VINTAGE")
+    @Column(name = "VINTAGE", length = 100)
     private String millesime;
 
     @Column(name = "QUANTITY")
     private int quantite;
 
-    @Column(name = "PRICE")
+    @Column(name = "PRICE", precision = 2)
     private float prix;
 
     @EqualsAndHashCode.Exclude

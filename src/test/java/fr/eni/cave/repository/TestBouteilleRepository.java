@@ -106,6 +106,8 @@ public class TestBouteilleRepository {
 
 		//Assert
 		assertEquals(bouteilleDB, bouteille);
+		assertNotNull(bouteilleDB.getId());
+
 		logger.info(bouteilleDB.toString());
 	}
 
@@ -119,7 +121,8 @@ public class TestBouteilleRepository {
 		List<Bouteille> bouteillesDB = bouteilleRepository.saveAll(bouteilles);
 
 		//Assert
-		bouteilles.forEach(bouteille -> assertTrue(bouteillesDB.contains(bouteille)));
+		bouteilles.forEach(bouteille -> assertNotNull(bouteille.getId()));
+
 		logger.info(bouteillesDB.toString());
 	}
 
@@ -137,15 +140,26 @@ public class TestBouteilleRepository {
 				.millesime("2026")
 				.build();
 
-		Bouteille bouteilleDB = bouteilleRepository.save(bouteille);
-		Integer id = bouteilleDB.getId();
+//		Bouteille bouteilleDB = bouteilleRepository.save(bouteille);
+		entityManager.persist(bouteille);
+		entityManager.flush();
+
+		Integer id = bouteille.getId();
 
 		//Act
-		bouteilleRepository.delete(bouteilleDB);
+		bouteilleRepository.delete(bouteille);
 
 		//Assert
-		Optional<Bouteille> optionalBouteille = bouteilleRepository.findById(id);
-		assertTrue(optionalBouteille.isEmpty());
+		Bouteille bouteilleDB = entityManager.find(Bouteille.class, id);
+		assertNull(bouteilleDB);
+
+		assertNotNull(entityManager.find(Couleur.class, rouge.getId()));
+		assertNotNull(entityManager.find(Couleur.class, blanc.getId()));
+		assertNotNull(entityManager.find(Couleur.class, rose.getId()));
+
+		assertNotNull(entityManager.find(Region.class, grandEst.getId()));
+		assertNotNull(entityManager.find(Region.class, nouvelleAquitaine.getId()));
+		assertNotNull(entityManager.find(Region.class, paysDeLaLoire.getId()));
 	}
 
 	private List<Bouteille> jeuDeDonnees() {
