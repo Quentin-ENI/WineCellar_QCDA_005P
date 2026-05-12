@@ -1,13 +1,12 @@
 package fr.eni.cave.repository;
 
-import fr.eni.cave.bo.Adresse;
-import fr.eni.cave.bo.Client;
+import fr.eni.cave.bo.client.Adresse;
+import fr.eni.cave.bo.client.Client;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
