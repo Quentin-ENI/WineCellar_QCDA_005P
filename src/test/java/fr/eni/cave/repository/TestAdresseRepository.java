@@ -1,7 +1,6 @@
 package fr.eni.cave.repository;
 
-import fr.eni.cave.bo.Adresse;
-import fr.eni.cave.bo.Client;
+import fr.eni.cave.bo.client.Adresse;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

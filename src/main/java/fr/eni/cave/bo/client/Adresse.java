@@ -1,4 +1,4 @@
-package fr.eni.cave.bo;
+package fr.eni.cave.bo.client;
 
 import jakarta.persistence.*;
 import lombok.*;
