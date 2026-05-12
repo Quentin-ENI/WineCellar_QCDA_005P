@@ -7,26 +7,23 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
+@EqualsAndHashCode
 @ToString
 @Builder
 @Entity
 @Table(name = "CAV_ADDRESS")
 public class Adresse {
-    @EqualsAndHashCode.Include
     @Column(name = "ADDRESS_ID", nullable = false)
     @Id
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     @Column(name = "STREET",length = 250,nullable = false)
     private String rue;
 
     @Column(name = "POSTAL_CODE",length = 5, nullable = false)
-    private String code;
+    private String codePostal;
 
     @Column(name = "CITY",length = 150, nullable = false)
     private String ville;
-
-    @OneToOne(mappedBy = "adresse", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Client client;
 }

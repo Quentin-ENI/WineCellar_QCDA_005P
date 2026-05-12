@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
 
@@ -25,16 +26,12 @@ public class TestClientRepository {
 
     @Test
     void test_save_client() {
-
         // Arrange
-
         Adresse adresse = Adresse.builder()
                 .ville("brest")
-                .code("29200")
+                .codePostal("29200")
                 .rue("15 rue victor hugo")
                 .build();
-
-        Adresse adresseBD = adresseRepository.save(adresse);
 
         Client client = Client.builder()
                 .pseudo("bobeponge@email.fr")
@@ -48,8 +45,9 @@ public class TestClientRepository {
         Client clientDB = clientRepository.save(client);
 
         // Assert
-        assertNotNull("bobeponge@email.fr", clientDB.getPseudo());
+        assertEquals("bobeponge@email.fr", clientDB.getPseudo());
         assertEquals(client, clientDB);
+        assertNotNull(clientDB.getAdresse().getId());
 
         // Trace - le mot de passe ne doit pas apparaître
         // Attendu : Client(id=1, pseudo=bobeponge@email.fr, nom=Eponge, prenom=Bob)
@@ -59,6 +57,12 @@ public class TestClientRepository {
     @Test
     void test_delete_client() {
         // Arrange
+        Adresse adresse = Adresse.builder()
+                .ville("brest")
+                .codePostal("29200")
+                .rue("15 rue victor hugo")
+                .build();
+
         String pseudo = "bobeponge@email.fr";
 
         Client client = Client.builder()
@@ -66,9 +70,11 @@ public class TestClientRepository {
                 .nom("Eponge")
                 .prenom("Bob")
                 .password("s3cr3t!")
+                .adresse(adresse)
                 .build();
 
         Client clientDB = clientRepository.save(client);
+        Integer idAdresse = clientDB.getAdresse().getId();
 
         // Trace - le mot de passe ne doit pas apparaître
         logger.info(clientDB.toString());
@@ -78,7 +84,9 @@ public class TestClientRepository {
 
         // Assert
         Optional<Client> optionalClient = clientRepository.findById(pseudo);
+        Optional<Adresse> optionalAdresse = adresseRepository.findById(idAdresse);
 
         assertTrue(optionalClient.isEmpty());
+        assertTrue(optionalAdresse.isEmpty());
     }
 }
