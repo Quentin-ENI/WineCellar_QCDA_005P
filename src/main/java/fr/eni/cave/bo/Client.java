@@ -27,7 +27,8 @@ public class Client {
     @Column(name = "PASSWORD",length = 68, nullable = false)
     private String password;
 
+    @Builder.Default
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "ADDRESS_ID", nullable = false)
-    private Adresse adresse;
+    private Adresse adresse = new Adresse();
 }
