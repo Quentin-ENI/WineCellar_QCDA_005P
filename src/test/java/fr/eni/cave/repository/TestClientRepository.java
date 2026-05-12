@@ -1,5 +1,6 @@
 package fr.eni.cave.repository;
 
+import fr.eni.cave.bo.Adresse;
 import fr.eni.cave.bo.Client;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -19,14 +20,28 @@ public class TestClientRepository {
     @Autowired
     private ClientRepository clientRepository;
 
+    @Autowired
+    private AdresseRepository adresseRepository;
+
     @Test
     void test_save_client() {
+
         // Arrange
+
+        Adresse adresse = Adresse.builder()
+                .ville("brest")
+                .code("29200")
+                .rue("15 rue victor hugo")
+                .build();
+
+        Adresse adresseBD = adresseRepository.save(adresse);
+
         Client client = Client.builder()
                 .pseudo("bobeponge@email.fr")
                 .nom("Eponge")
                 .prenom("Bob")
                 .password("s3cr3t!")
+                .adresse(adresse)
                 .build();
 
         // Act
