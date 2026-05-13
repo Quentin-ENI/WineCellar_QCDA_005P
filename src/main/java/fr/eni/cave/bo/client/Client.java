@@ -1,34 +1,20 @@
 package fr.eni.cave.bo.client;
 
+import fr.eni.cave.bo.client.Adresse;
 import jakarta.persistence.*;
 import lombok.*;
+import lombok.experimental.SuperBuilder;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@ToString(exclude = "password")
-@Builder
+@SuperBuilder
 @Entity
 @Table(name = "CAV_CLIENT")
-public class Client {
-    @EqualsAndHashCode.Include
-    @Column(name = "LOGIN",length = 255, nullable = false)
-    @Id
-    private String pseudo;
+public class Client extends Utilisateur {
 
-    @Column(name = "LAST_NAME",length = 90, nullable = false)
-    private String nom;
-
-    @Column(name = "FIRST_NAME",length = 150, nullable = false)
-    private String prenom;
-
-    @Column(name = "PASSWORD",length = 68, nullable = false)
-    private String password;
-
-    @Builder.Default
-    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "ADDRESS_ID", nullable = false)
-    private Adresse adresse = new Adresse();
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
+    @JoinColumn(name = "ADDRESS_ID")
+    private Adresse adresse;
 }
