@@ -10,9 +10,13 @@ import java.util.List;
 
 @Repository
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, String> {
-    @Query("SELECT u FROM Utilisateur u WHERE u.pseudo = :pseudo")
-    List<Utilisateur> filterUserByLogin(@Param("pseudo") String pseudo);
+//    @Query("SELECT u FROM Utilisateur u WHERE u.pseudo = :pseudo")
+//    List<Utilisateur> filterUserByLogin(@Param("pseudo") String pseudo);
 
-    @Query("SELECT u FROM Utilisateur u WHERE u.pseudo = :pseudo AND u.password = :password")
-    List<Utilisateur> filterUserByLoginAndPassword(@Param("pseudo") String pseudo, @Param("password") String password);
+    Utilisateur findUtilisateurByPseudo(String pseudo);
+
+//    @Query("SELECT u FROM Utilisateur u WHERE u.pseudo = :pseudo AND u.password = :password")
+//    List<Utilisateur> filterUserByLoginAndPassword(@Param("pseudo") String pseudo, @Param("password") String password);
+
+    Utilisateur findUtilisateurByPseudoAndPassword(String pseudo, String password);
 }

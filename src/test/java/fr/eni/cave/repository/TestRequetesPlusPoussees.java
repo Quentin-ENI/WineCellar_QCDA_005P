@@ -23,7 +23,7 @@ public class TestRequetesPlusPoussees {
 	private TestEntityManager entityManager;
 
 	@Autowired
-	BouteilleRepository bouteilleRepository;
+	UtilisateurRepository utilisateurRepository;
 
 	Region paysDeLaLoire;
 	Couleur blanc;
@@ -192,6 +192,9 @@ public class TestRequetesPlusPoussees {
 				.adresse(adresse)
 				.build();
 
+		entityManager.persist(tom);
+		entityManager.flush();
+
 		paniers.forEach(p -> {
 			p.setClient(tom);
 		});
@@ -239,4 +242,106 @@ public class TestRequetesPlusPoussees {
 
 		logger.info(panierDB.toString());
 	}
+
+	@Test
+	void test_save_paniers_unClient() {
+		// A
+		Bouteille bouteille = bouteilles.getFirst();
+		Panier panier1 = new Panier();
+		LignePanier lignePanier = LignePanier
+				.builder()
+				.bouteille(bouteille)
+				.qteCommande(3)
+				.prix(3 * bouteille.getPrix())
+				.build();
+		panier1.getLignes().add(lignePanier);
+		panier1.setPrixTotal(lignePanier.getPrix());
+		panier1.setClient(tom);
+
+		Panier panier2 = new Panier();
+		LignePanier lignePanier2 = LignePanier
+				.builder()
+				.bouteille(bouteille)
+				.qteCommande(2)
+				.prix(2 * bouteille.getPrix())
+				.build();
+		panier2.getLignes().add(lignePanier2);
+		panier2.setPrixTotal(lignePanier2.getPrix());
+		panier2.setClient(tom);
+
+		// A
+		panierRepository.saveAll(List.of(panier1, panier2));
+
+		// A
+		assertNotNull(panier1.getId());
+		assertNotNull(panier2.getId());
+		assertEquals(panier1.getClient(), panier2.getClient());
+
+		logger.info(panier1.toString());
+		logger.info(panier2.toString());
+	}
+
+	@Test
+	void test_delete() {
+		// A
+		Bouteille bouteille = bouteilles.getFirst();
+		Panier panier1 = new Panier();
+		LignePanier lignePanier = LignePanier
+				.builder()
+				.bouteille(bouteille)
+				.qteCommande(3)
+				.prix(3 * bouteille.getPrix())
+				.build();
+		panier1.getLignes().add(lignePanier);
+		panier1.setPrixTotal(lignePanier.getPrix());
+		panier1.setClient(tom);
+
+		Panier panier2 = new Panier();
+		LignePanier lignePanier2 = LignePanier
+				.builder()
+				.bouteille(bouteille)
+				.qteCommande(2)
+				.prix(2 * bouteille.getPrix())
+				.build();
+		panier2.getLignes().add(lignePanier2);
+		panier2.setPrixTotal(lignePanier2.getPrix());
+		panier2.setClient(tom);
+
+		String pseudo = "tomhanks@email.fr";
+
+		entityManager.persist(panier1);
+		entityManager.persist(panier2);
+		entityManager.flush();
+
+		// A
+		utilisateurRepository.delete(tom);
+
+		// A
+		assertNotNull(entityManager.find(Panier.class, panier1.getId()));
+		assertNotNull(entityManager.find(Panier.class, panier2.getId()));
+		assertNull(entityManager.find(Utilisateur.class, pseudo));
+	}
+
+	@Test
+	void test_JPQL_userPaniers() {
+		// A
+
+		// A
+		List<Panier> paniers = panierRepository.findPaniersByClientAndNumCommandeIsNull(tom);
+
+		// A
+		assertEquals(1, paniers.size());
+	}
+
+	@Test
+	void test_JPQL_userCommandes() {
+		// A
+
+		// A
+		List<Panier> paniers = panierRepository.findPaniersByClientAndNumCommandeIsNotNull(tom);
+
+		// A
+		assertEquals(2, paniers.size());
+	}
+
 }

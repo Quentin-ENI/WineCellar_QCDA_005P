@@ -1,6 +1,7 @@
 package fr.eni.cave.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.filter;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -39,6 +40,8 @@ public class TestRequetes {
 	Region paysDeLaLoire;
 	Couleur blanc;
 	List<Bouteille> bouteilles;
+    @Autowired
+    private PanierRepository panierRepository;
 
 	@BeforeEach
 	void initDB() {
@@ -210,23 +213,33 @@ public class TestRequetes {
 				.qteCommande(bouteille.getQuantite())
 				.bouteille(bouteille)
 				.build();
-		panier.getLignes().add(lignePanier);
+
+		LignePanier lignePanier2 = LignePanier.builder()
+				.prix(bouteille.getPrix())
+				.qteCommande(bouteille.getQuantite())
+				.bouteille(bouteille)
+				.build();
+
 		panier.setClient(tom);
+		panier.getLignes().add(lignePanier);
 
 		entityManager.persist(bouteille);
-		entityManager.persist(adresse);
 		entityManager.persist(tom);
 		entityManager.persist(panier);
 		entityManager.flush();
 
-		//A
-		LignePanier lignePanierDB = lignePanierRepository.save(lignePanier);
+		panier.getLignes().add(lignePanier2);
 
 		//A
-		assertEquals(lignePanierDB, lignePanier);
-		assertNotNull(lignePanierDB.getId());
+		Panier panierDB = panierRepository.save(panier);
 
-		logger.info(lignePanierDB.toString());
+		//A
+		panier.getLignes().forEach(
+				lp -> {
+					assertNotNull(lp.getId());
+					logger.info(lp.toString());
+				}
+		);
 	}
 
 	@Test
@@ -281,10 +294,14 @@ public class TestRequetes {
 		// A
 
 		// A
-		List<Bouteille> filterBouteilles = bouteilleRepository.filterBottleByRegion(paysDeLaLoire.getId());
+		List<Bouteille> filterBouteilles = bouteilleRepository.findBouteillesByRegion(paysDeLaLoire);
 
 		// A
 		assertEquals(3, filterBouteilles.size());
+		filterBouteilles.forEach(b -> {
+			assertEquals(b.getRegion(), paysDeLaLoire);
+			logger.info(b.toString());
+		});
 	}
 
 	@Test
@@ -292,10 +309,14 @@ public class TestRequetes {
 		// A
 
 		// A
-		List<Bouteille> filterBouteilles = bouteilleRepository.filterBottleByColor(blanc.getId());
+		List<Bouteille> filterBouteilles = bouteilleRepository.findBouteillesByCouleur(blanc);
 
 		// A
 		assertEquals(2, filterBouteilles.size());
+		filterBouteilles.forEach(b -> {
+			assertEquals(b.getCouleur(), blanc);
+			logger.info(b.toString());
+		});
 	}
 
 	@Test
@@ -303,11 +324,11 @@ public class TestRequetes {
 		// A
 
 		// A
-		List<Utilisateur> filterUtilisateur = utilisateurRepository.filterUserByLogin("georgelucas@email.fr");
+		Utilisateur user = utilisateurRepository.findUtilisateurByPseudo("georgelucas@email.fr");
 
 		// A
-		assertEquals(1, filterUtilisateur.size());
-		assertEquals("Lucas", filterUtilisateur.getFirst().getNom());
+		assertEquals("Lucas", user.getNom());
+		assertEquals("George", user.getPrenom());
 	}
 
 	@Test
@@ -315,12 +336,10 @@ public class TestRequetes {
 		// A
 
 		// A
-		List<Utilisateur> filterUtilisateur = utilisateurRepository.filterUserByLoginAndPassword("harrisonford@email.fr", "IndianaJones3");
+		Utilisateur user = utilisateurRepository.findUtilisateurByPseudoAndPassword("harrisonford@email.fr", "IndianaJones3");
 
 		// A
-		assertEquals(1, filterUtilisateur.size());
-		assertEquals("Ford", filterUtilisateur.getFirst().getNom());
+		assertEquals("Ford", user.getNom());
+		assertEquals("Harrison", user.getPrenom());
 	}
-
-
 }
