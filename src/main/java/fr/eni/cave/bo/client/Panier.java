@@ -35,4 +35,8 @@ public class Panier {
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     @JoinColumn(name = "SHOPPING_CART_ID", nullable = false)
     private List<LignePanier> lignes = new ArrayList<>();
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "CLIENT_ID")
+    private Client client;
 }
