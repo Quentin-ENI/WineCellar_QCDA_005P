@@ -15,20 +15,17 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "CAV_USER")
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Utilisateur {
-
     @EqualsAndHashCode.Include
     @Id
     @Column(name = "LOGIN", length = 255, nullable = false)
-    protected String pseudo;
+    private String pseudo;
 
     @Column(name = "PASSWORD", length = 68, nullable = false)
-    protected String password;
+    private String password;
 
     @Column(name = "LAST_NAME", length = 90, nullable = false)
-    protected String nom;
+    private String nom;
 
     @Column(name = "FIRST_NAME", length = 150, nullable = false)
-    protected String prenom;
-
-
+    private String prenom;
 }

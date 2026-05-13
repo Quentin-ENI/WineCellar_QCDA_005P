@@ -1,27 +1,30 @@
 package fr.eni.cave.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-import java.util.*;
-
+import fr.eni.cave.bo.client.Adresse;
+import fr.eni.cave.bo.client.Client;
 import fr.eni.cave.bo.client.Proprio;
 import fr.eni.cave.bo.client.Utilisateur;
-import fr.eni.cave.repository.ClientRepository;
-import fr.eni.cave.repository.ProprioRepository;
-import fr.eni.cave.repository.UtilisateurRepository;
-import org.junit.jupiter.api.*;
-import org.springframework.beans.factory.annotation.Autowired;
-
-
-import fr.eni.cave.bo.client.Client;
-import fr.eni.cave.bo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @Slf4j
 @DataJpaTest
 public class TestHeritage {
+	private final Logger logger = LoggerFactory.getLogger(TestHeritage.class);
+
 	@Autowired
 	private TestEntityManager entityManager;
 
@@ -36,6 +39,12 @@ public class TestHeritage {
 
 	@BeforeEach
 	public void initDB() {
+		Adresse adresse = Adresse.builder()
+				.rue("2 rue Georges Perros")
+				.codePostal("29000")
+				.ville("Quimper")
+				.build();
+
 		List<Utilisateur> utilisateurs = new ArrayList<>();
 		utilisateurs.add(Utilisateur
 				.builder()
@@ -60,13 +69,49 @@ public class TestHeritage {
 				.password("MarsAttacks!")
 				.nom("Portman")
 				.prenom("Natalie")
+				.adresse(adresse)
 				.build());
 
 		// Contexte de la DB
 		utilisateurs.forEach(e -> {
 			entityManager.persist(e);
 		});
+		entityManager.flush();
 	}
 
+	@Test
+	void test_findAll_utilisateur() {
+		// A
+		// A
+		List<Utilisateur> users = utilisateurRepository.findAll();
+		// A
+		assertThat(users.size()).isEqualTo(3);
 
+		logger.info(users.toString());
+	}
+
+	@Test
+	void test_findAll_proprio() {
+		// A
+		// A
+		List<Proprio> owners = proprioRepository.findAll();
+		// A
+		assertThat(owners.size()).isEqualTo(1);
+		assertEquals("georgelucas@email.fr", owners.getFirst().getPseudo());
+		assertNotNull(owners.getFirst().getSiret());
+
+		logger.info(owners.getFirst().toString());
+	}
+
+	@Test
+	void test_findAll_client() {
+		// A
+		// A
+		List<Client> customers = clientRepository.findAll();
+		// A
+		assertThat(customers.size()).isEqualTo(1);
+		assertEquals("natalieportman@email.fr", customers.getFirst().getPseudo());
+
+		logger.info(customers.getFirst().toString());
+	}
 }

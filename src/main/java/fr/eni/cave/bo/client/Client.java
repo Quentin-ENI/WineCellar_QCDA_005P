@@ -14,7 +14,7 @@ import lombok.experimental.SuperBuilder;
 @Table(name = "CAV_CLIENT")
 public class Client extends Utilisateur {
 
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL, optional = false)
     @JoinColumn(name = "ADDRESS_ID")
     private Adresse adresse;
 }
