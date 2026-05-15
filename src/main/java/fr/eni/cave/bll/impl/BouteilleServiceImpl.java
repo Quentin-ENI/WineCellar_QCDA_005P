@@ -4,6 +4,10 @@ import java.util.List;
 import java.util.Optional;
 
 import fr.eni.cave.bll.BouteilleService;
+import fr.eni.cave.dto.BouteilleDto;
+import fr.eni.cave.exceptions.CouleurException;
+import fr.eni.cave.exceptions.RegionException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
 import fr.eni.cave.bo.vin.Bouteille;
@@ -20,6 +24,7 @@ public class BouteilleServiceImpl implements BouteilleService {
 	private BouteilleRepository bRepository;
 	private RegionRepository rRepository;
 	private CouleurRepository cRepository;
+
 
 	@Override
 	public List<Bouteille> chargerToutesBouteilles() {
@@ -77,8 +82,28 @@ public class BouteilleServiceImpl implements BouteilleService {
 		return listeDB;		
 	}
 
+	@Override
+	public Bouteille create(BouteilleDto bouteilleDto) {
+		Bouteille bouteille = buildBouteille(bouteilleDto);
+		return saveBouteille(bouteille);
+	}
+
+
+	@Override
+	public Bouteille update(BouteilleDto bouteilleDto) {
+		if (bouteilleDto.getId() <= 0) {
+			throw new RuntimeException("Identifiant n'existe pas");
+		}
+
+		if (!bRepository.existsById(bouteilleDto.getId())) {
+			this.create(bouteilleDto);
+		}
+		Bouteille bouteille = buildBouteille(bouteilleDto);
+		bouteille.setId(bouteilleDto.getId());
+		return saveBouteille(bouteille);
+	}
+
 	private Couleur validerCouleur(int idCouleur) {
-		// Valider la Couleur
 		if (idCouleur <= 0) {
 			throw new RuntimeException("Identifiant n'existe pas");
 		}
@@ -87,7 +112,45 @@ public class BouteilleServiceImpl implements BouteilleService {
 		if (opt.isPresent()) {
 			return opt.get();
 		}
-		// Identifiant correspond à aucun enregistrement en base
 		throw new RuntimeException("Aucune couleur de vin ne correspond");
+	}
+
+
+	private Bouteille buildBouteille(BouteilleDto bouteilleDto) {
+
+		if(bouteilleDto.getCouleurId() <= 0 ) {
+			throw new RuntimeException("La couleur n'existe pas");
+		}
+
+		if(bouteilleDto.getRegionId() <= 0) {
+			throw new RuntimeException("La region n'existe pas");
+		}
+		Optional<Couleur> couleur = cRepository.findById(bouteilleDto.getCouleurId());
+		if(couleur.isEmpty()){
+			throw new CouleurException("Le couleur n'existe pas");
+		}
+
+		Optional<Region> region = rRepository.findById(bouteilleDto.getRegionId());
+		if(region.isEmpty()){
+			throw new RegionException("Le region n'existe pas");
+		}
+
+		return Bouteille.builder()
+				.couleur(couleur.get())
+				.region(region.get())
+				.prix(bouteilleDto.getPrix())
+				.millesime(bouteilleDto.getMillesime())
+				.quantite(bouteilleDto.getQuantite())
+				.nom(bouteilleDto.getNom())
+				.petillant(bouteilleDto.isPetillant())
+				.build();
+	}
+
+	private Bouteille saveBouteille(Bouteille bouteille) {
+		try {
+			return bRepository.save(bouteille);
+		} catch (DataIntegrityViolationException e) {
+			throw e;
+		}
 	}
 }

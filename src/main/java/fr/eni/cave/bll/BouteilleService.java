@@ -3,6 +3,7 @@ package fr.eni.cave.bll;
 import java.util.List;
 
 import fr.eni.cave.bo.vin.Bouteille;
+import fr.eni.cave.dto.BouteilleDto;
 
 public interface BouteilleService {
 	List<Bouteille> chargerToutesBouteilles();
@@ -12,4 +13,7 @@ public interface BouteilleService {
 	List<Bouteille> chargerBouteillesParRegion(int idRegion);
 
 	List<Bouteille> chargerBouteillesParCouleur(int idCouleur);
+
+	Bouteille create(BouteilleDto bouteilleDto);
+	Bouteille update(BouteilleDto bouteilleDto);
 }

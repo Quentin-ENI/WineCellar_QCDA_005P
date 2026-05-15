@@ -22,4 +22,5 @@ public interface BouteilleRepository extends JpaRepository<Bouteille, Integer> {
 
     // Rechercher une bouteille par son nom
     Bouteille findByNom(@Param("nom") String nom);
+
 }
