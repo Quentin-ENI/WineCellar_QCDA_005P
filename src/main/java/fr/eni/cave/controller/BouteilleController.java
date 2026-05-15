@@ -2,13 +2,12 @@ package fr.eni.cave.controller;
 
 import fr.eni.cave.bll.BouteilleService;
 import fr.eni.cave.bo.vin.Bouteille;
+import fr.eni.cave.dto.BouteilleDto;
 import fr.eni.cave.dto.ResponseApi;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -135,4 +134,114 @@ public class BouteilleController {
                     );
         }
     }
+
+    @PostMapping
+    public ResponseEntity<ResponseApi<BouteilleDto>> create(
+        @RequestBody BouteilleDto bouteilleDTO
+    ){
+        Bouteille bouteille;
+        try {
+            bouteille = bouteilleService.create(bouteilleDTO);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(
+                    ResponseApi.<BouteilleDto>builder()
+                        .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
+                        .message(e.getMessage())
+                        .build()
+                );
+        }
+
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
+            .body(
+                ResponseApi
+                    .<BouteilleDto>builder()
+                    .statusCode(HttpStatus.CREATED.value())
+                    .message(HttpStatus.CREATED.name())
+                    .data(
+                        BouteilleDto
+                            .builder()
+                            .id(bouteille.getId())
+                            .nom(bouteille.getNom())
+                            .quantite(bouteille.getQuantite())
+                            .petillant(bouteille.isPetillant())
+                            .millesime(bouteille.getMillesime())
+                            .prix(bouteille.getPrix())
+                            .regionId(bouteille.getRegion().getId())
+                            .couleurId(bouteille.getCouleur().getId())
+                            .build()
+                    )
+                    .build()
+            );
+    }
+
+    @PutMapping
+    public ResponseEntity<ResponseApi<BouteilleDto>> update(
+            @RequestBody BouteilleDto bouteilleDTO
+    ){
+        Bouteille bouteille;
+        try {
+            bouteille = bouteilleService.update(bouteilleDTO);
+
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity
+                    .status(HttpStatus.NOT_ACCEPTABLE)
+                    .body(
+                            ResponseApi.<BouteilleDto>builder()
+                                    .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
+                                    .message(e.getMessage())
+                                    .build()
+                    );
+        }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(
+                        ResponseApi
+                                .<BouteilleDto>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message(HttpStatus.OK.name())
+                                .data(
+                                        BouteilleDto
+                                                .builder()
+                                                .nom(bouteille.getNom())
+                                                .quantite(bouteille.getQuantite())
+                                                .petillant(bouteille.isPetillant())
+                                                .millesime(bouteille.getMillesime())
+                                                .prix(bouteille.getPrix())
+                                                .regionId(bouteille.getRegion().getId())
+                                                .couleurId(bouteille.getCouleur().getId())
+                                                .build()
+                                )
+                                .build()
+                );
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<ResponseApi<String>> delete(@PathVariable("id") String id) {
+        Integer idBouteille = 0;
+        try {
+            idBouteille = Integer.parseInt(id);
+            bouteilleService.supprimer(idBouteille);
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(
+                    ResponseApi.<String>builder()
+                            .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
+                            .message(HttpStatus.NOT_ACCEPTABLE.name())
+                            .data(exception.getMessage())
+                            .build()
+            );
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(
+                ResponseApi.<String>builder()
+                        .statusCode(HttpStatus.OK.value())
+                        .message(HttpStatus.OK.name())
+                        .data("La bouteille avec l'id " + idBouteille + " a bien été supprimée.")
+                        .build()
+        );
+    }
+
 }
