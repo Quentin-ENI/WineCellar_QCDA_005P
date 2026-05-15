@@ -43,7 +43,6 @@ public class BouteilleController {
 
     @GetMapping("/{id}")
     public ResponseEntity<ResponseApi<Bouteille>> getById(@PathVariable String id) {
-
         try {
             int idBouteille = Integer.parseInt(id);
 
@@ -56,9 +55,7 @@ public class BouteilleController {
                             .data(bouteille)
                             .build()
             );
-
         } catch (NumberFormatException e) {
-
             return ResponseEntity
                     .status(HttpStatus.NOT_ACCEPTABLE)
                     .body(
@@ -71,11 +68,11 @@ public class BouteilleController {
         }
     }
 
-    @GetMapping("/region/{id}")
-    public ResponseEntity<ResponseApi<List<Bouteille>>> getByRegion(@PathVariable String id) {
+    @GetMapping("/region/{region_id}")
+    public ResponseEntity<ResponseApi<List<Bouteille>>> getByRegion(@PathVariable String region_id) {
 
         try {
-            int idRegion = Integer.parseInt(id);
+            int idRegion = Integer.parseInt(region_id);
 
             List<Bouteille> bouteilles =
                     bouteilleService.chargerBouteillesParRegion(idRegion);
@@ -91,9 +88,7 @@ public class BouteilleController {
                             .data(bouteilles)
                             .build()
             );
-
         } catch (NumberFormatException e) {
-
             return ResponseEntity
                     .status(HttpStatus.NOT_ACCEPTABLE)
                     .body(
@@ -106,11 +101,11 @@ public class BouteilleController {
         }
     }
 
-    @GetMapping("/couleur/{id}")
-    public ResponseEntity<ResponseApi<List<Bouteille>>> getByCouleur(@PathVariable String id) {
+    @GetMapping("/couleur/{couleur_id}")
+    public ResponseEntity<ResponseApi<List<Bouteille>>> getByCouleur(@PathVariable String couleur_id) {
 
         try {
-            int idCouleur = Integer.parseInt(id);
+            int idCouleur = Integer.parseInt(couleur_id);
 
             List<Bouteille> bouteilles =
                     bouteilleService.chargerBouteillesParCouleur(idCouleur);
@@ -134,11 +129,10 @@ public class BouteilleController {
                     .body(
                             ResponseApi.<List<Bouteille>>builder()
                                     .statusCode(HttpStatus.NOT_ACCEPTABLE.value())
-                                    .message("Identifiant couleur invalidee")
+                                    .message("Identifiant couleur invalide")
                                     .data(null)
                                     .build()
                     );
         }
     }
-
 }
