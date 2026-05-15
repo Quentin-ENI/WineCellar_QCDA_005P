@@ -84,7 +84,7 @@ public class BouteilleServiceImpl implements BouteilleService {
 
 	@Override
 	public Bouteille create(BouteilleDto bouteilleDto) {
-		Bouteille bouteille = buildBouteille(bouteilleDto);
+		Bouteille bouteille = bouteilleMapping(bouteilleDto);
 		return saveBouteille(bouteille);
 	}
 
@@ -92,15 +92,27 @@ public class BouteilleServiceImpl implements BouteilleService {
 	@Override
 	public Bouteille update(BouteilleDto bouteilleDto) {
 		if (bouteilleDto.getId() <= 0) {
-			throw new RuntimeException("Identifiant n'existe pas");
+			throw new RuntimeException("L'identifiant doit être positif");
 		}
 
 		if (!bRepository.existsById(bouteilleDto.getId())) {
 			this.create(bouteilleDto);
 		}
-		Bouteille bouteille = buildBouteille(bouteilleDto);
+		Bouteille bouteille = bouteilleMapping(bouteilleDto);
 		bouteille.setId(bouteilleDto.getId());
 		return saveBouteille(bouteille);
+	}
+
+	@Override
+	public void supprimer(int idBouteille) {
+		if (idBouteille <= 0) {
+			throw new RuntimeException("Identifiant n'existe pas");
+		}
+		try {
+			bRepository.deleteById(idBouteille);
+		} catch (Exception e) {
+			throw new RuntimeException("Impossible de supprimer la bouteille (id = " + idBouteille + ")");
+		}
 	}
 
 	private Couleur validerCouleur(int idCouleur) {
@@ -116,15 +128,8 @@ public class BouteilleServiceImpl implements BouteilleService {
 	}
 
 
-	private Bouteille buildBouteille(BouteilleDto bouteilleDto) {
+	private Bouteille bouteilleMapping(BouteilleDto bouteilleDto) {
 
-		if(bouteilleDto.getCouleurId() <= 0 ) {
-			throw new RuntimeException("La couleur n'existe pas");
-		}
-
-		if(bouteilleDto.getRegionId() <= 0) {
-			throw new RuntimeException("La region n'existe pas");
-		}
 		Optional<Couleur> couleur = cRepository.findById(bouteilleDto.getCouleurId());
 		if(couleur.isEmpty()){
 			throw new CouleurException("Le couleur n'existe pas");
