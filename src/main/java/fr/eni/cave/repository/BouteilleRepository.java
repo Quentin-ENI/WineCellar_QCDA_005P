@@ -19,4 +19,7 @@ public interface BouteilleRepository extends JpaRepository<Bouteille, Integer> {
 //    List<Bouteille> filterBottleByColor(@Param("couleurId") Integer couleurId);
 
     List<Bouteille> findBouteillesByCouleur(Couleur couleur);
+
+    // Rechercher une bouteille par son nom
+    Bouteille findByNom(@Param("nom") String nom);
 }
