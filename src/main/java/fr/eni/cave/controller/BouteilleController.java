@@ -1,7 +1,8 @@
 package fr.eni.cave.controller;
 
-import fr.eni.cave.bll.impl.BouteilleServiceImpl;
+import fr.eni.cave.bll.BouteilleService;
 import fr.eni.cave.bo.vin.Bouteille;
+import fr.eni.cave.dto.ResponseApi;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,15 +14,15 @@ import java.util.List;
 @RequestMapping("/caveavin/bouteilles")
 @RestController
 public class BouteilleController {
-    private final BouteilleServiceImpl bouteilleServiceImpl;
+    private final BouteilleService bouteilleService;
 
-    public BouteilleController(BouteilleServiceImpl bouteilleServiceImpl) {
-        this.bouteilleServiceImpl = bouteilleServiceImpl;
+    public BouteilleController(BouteilleService bouteilleService) {
+        this.bouteilleService = bouteilleService;
     }
 
     @GetMapping
-    ResponseEntity<?> list() {
-        List<Bouteille> bouteilles = bouteilleServiceImpl.chargerToutesBouteilles();
+    ResponseEntity<ResponseApi<List<Bouteille>>> list() {
+        List<Bouteille> bouteilles = bouteilleService.chargerToutesBouteilles();
 
         if(bouteilles.isEmpty()){
             return ResponseEntity
@@ -30,6 +31,12 @@ public class BouteilleController {
 
         return ResponseEntity
                 .status(HttpStatus.OK)
-                .body(bouteilles);
+                .body(
+                        ResponseApi.<List<Bouteille>>builder()
+                                .statusCode(HttpStatus.OK.value())
+                                .message(HttpStatus.OK.name())
+                                .data(bouteilles)
+                                .build()
+                );
     }
 }
