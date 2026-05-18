@@ -180,7 +180,7 @@ public class BouteilleController {
 
     @PutMapping
     public ResponseEntity<ResponseApi<BouteilleDto>> update(
-            @RequestBody BouteilleDto bouteilleDTO
+            @Valid @RequestBody BouteilleDto bouteilleDTO
     ){
         Bouteille bouteille;
         try {
