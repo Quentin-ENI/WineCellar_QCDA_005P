@@ -5,7 +5,11 @@ spring:
     url: jdbc:sqlserver://localhost;databaseName=CAVE_A_VIN;integratedSecurity=false;encrypt=false;trustServerCertificate=false
     username: sa
     password: Pa$$w0rd
+  messages:
+    encoding: UTF-8
   jpa:
     show-sql: true
     hibernate:
       ddl-auto: update
+  web:
+    locale: en_GB

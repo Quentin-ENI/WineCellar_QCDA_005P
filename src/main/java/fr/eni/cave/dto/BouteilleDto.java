@@ -15,24 +15,24 @@ import lombok.*;
 public class BouteilleDto {
     private Integer id;
 
-    @NotBlank(message = "Le nom ne peut pas être vide")
-    @Size(min = 3, max = 250, message = "Le nom doit contenir entre 3 et 250 caractères.")
+    @NotBlank(message = "{bottle.name.blank-error}")
+    @Size(min = 3, max = 250, message = "{bottle.name.size-error}")
     private String nom;
 
     private boolean petillant;
 
-    @Size(max = 100, message = "Le millésime ne peut pas avoir plus de 100 caractères.")
+    @Size(max = 100, message = "{bottle.vintage.size-error}")
     private String millesime;
 
-    @Min(value = 1, message = "La quantité doit être supérieure ou égale à 1.")
+    @Min(value = 1, message = "{bottle.quantity.min-error}")
     private int quantite;
 
-    @Min(value = 1, message = "Le prix doit être supérieur ou égal à 1.")
+    @Min(value = 1, message = "{bottle.price.min-error}")
     private float prix;
 
-    @NotNull(message = "La couleur doit être renseignée.")
+    @NotNull(message = "{bottle.color.not-null}")
     private Integer couleurId;
 
-    @NotNull(message = "La région doit être renseignée.")
+    @NotNull(message = "{bottle.region.not-null}")
     private Integer regionId;
 }
