@@ -4,6 +4,7 @@ import fr.eni.cave.bll.BouteilleService;
 import fr.eni.cave.bo.vin.Bouteille;
 import fr.eni.cave.dto.BouteilleDto;
 import fr.eni.cave.dto.ResponseApi;
+import jakarta.validation.Valid;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -137,7 +138,7 @@ public class BouteilleController {
 
     @PostMapping
     public ResponseEntity<ResponseApi<BouteilleDto>> create(
-        @RequestBody BouteilleDto bouteilleDTO
+            @Valid @RequestBody BouteilleDto bouteilleDTO
     ){
         Bouteille bouteille;
         try {
