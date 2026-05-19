@@ -1,4 +1,4 @@
-package fr.eni.cave.bo;
+package fr.eni.cave.bo.avis;
 
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;

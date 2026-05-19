@@ -1,6 +1,6 @@
 package fr.eni.cave.repository;
 
-import fr.eni.cave.bo.Avis;
+import fr.eni.cave.bo.avis.Avis;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
