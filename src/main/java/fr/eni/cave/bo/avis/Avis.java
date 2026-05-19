@@ -18,7 +18,7 @@ import java.time.LocalDateTime;
 public class Avis {
 
     @Id
-    private String id;
+    private BouteilleId id;
 
     @Field(name = "note")
     private int note;
