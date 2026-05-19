@@ -2,6 +2,7 @@ package fr.eni.cave.repository;
 
 import fr.eni.cave.bo.avis.Avis;
 import fr.eni.cave.bo.avis.BouteilleId;
+import fr.eni.cave.bo.avis.Profile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,11 @@ public class TestAvisRepository {
     @Test
     @Order(1)
     void test_save() {
+        Profile client = Profile.builder()
+                .pseudo("John")
+                .quantiteCommandee(10)
+                .build();
+
         BouteilleId bouteilleId = BouteilleId.builder()
                 .idBouteille(1)
                 .idRegion(1)
@@ -42,6 +48,7 @@ public class TestAvisRepository {
                 .note(4)
                 .commentaire("Correct")
                 .date(LocalDateTime.now())
+                .client(client)
                 .build();
 
         Avis avisDB =  avisRepository.save(avis);
