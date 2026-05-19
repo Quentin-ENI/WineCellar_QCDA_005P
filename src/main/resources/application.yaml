@@ -13,3 +13,14 @@ spring:
       ddl-auto: update
   web:
     locale: en_GB
+  mongodb:
+    username: sa
+    password: Passw0rd
+    host: 10.171.200.23
+    port: 27017
+    database: cave_a_vin
+    authentication-database: admin
+
+logging:
+  level:
+    org.springframework.data.mongodb.core.MongoTemplate: DEBUG
