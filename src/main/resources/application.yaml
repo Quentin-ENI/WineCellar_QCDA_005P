@@ -16,9 +16,9 @@ spring:
   mongodb:
     username: sa
     password: Passw0rd
-    host: 10.171.200.23
+    host: 10.171.200.18
     port: 27017
-    database: cave_a_vin
+    database: Gestion_Avis
     authentication-database: admin
 
 logging:
