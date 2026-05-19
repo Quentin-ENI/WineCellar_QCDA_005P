@@ -16,7 +16,7 @@ spring:
   mongodb:
     username: sa
     password: Passw0rd
-    host: 10.171.200.18
+    host: 10.171.200.19
     port: 27017
     database: Gestion_Avis
     authentication-database: admin
