@@ -2,7 +2,7 @@ package fr.eni.cave.repository;
 
 import fr.eni.cave.bo.avis.Avis;
 import fr.eni.cave.bo.avis.BouteilleId;
-import fr.eni.cave.bo.avis.Profile;
+import fr.eni.cave.bo.profil.Profile;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

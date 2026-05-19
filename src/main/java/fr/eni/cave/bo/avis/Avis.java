@@ -1,5 +1,6 @@
 package fr.eni.cave.bo.avis;
 
+import fr.eni.cave.bo.profil.Profile;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
