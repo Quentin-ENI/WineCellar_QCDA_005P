@@ -32,7 +32,6 @@ public class AppSecurityConfiguration {
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) {
         http.authorizeHttpRequests(auth -> auth
-
                 // ===== VISITEUR (public)
                 .requestMatchers(HttpMethod.GET, "/caveavin/bouteilles/**").permitAll()
 
@@ -40,6 +39,7 @@ public class AppSecurityConfiguration {
                 .requestMatchers(HttpMethod.GET, "/caveavin/paniers/**")
                 .hasAnyAuthority("ROLE_CLIENT", "ROLE_OWNER")
 
+                // ===== CLIENT ONLY
                 .requestMatchers(HttpMethod.POST, "/caveavin/paniers/**")
                 .hasAuthority("ROLE_CLIENT")
 

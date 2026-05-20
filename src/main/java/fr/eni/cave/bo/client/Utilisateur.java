@@ -29,6 +29,6 @@ public class Utilisateur {
     @Column(name = "FIRST_NAME", length = 150, nullable = false)
     private String prenom;
 
-    @Column(name = "ROLE", length = 15, nullable = false)
+    @Column(name = "AUTHORITY", length = 15, nullable = true)
     private String authority;
 }
