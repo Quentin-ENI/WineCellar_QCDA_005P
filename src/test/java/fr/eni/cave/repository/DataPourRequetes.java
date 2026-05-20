@@ -35,63 +35,14 @@ class DataPourRequetes {
     private RegionRepository regionRepository;
     @Autowired
     private CouleurRepository couleurRepository;
+	@Autowired
+	private ProfileRepository profileRepository;
 
-//	void insertion_Bouteille_DB() {
-//		final List<Bouteille> listeBouteilles = new ArrayList<>();
-//		// Création de 3 Bouteille
-//
-//		listeBouteilles.add(Bouteille
-//				.builder()
-//				.nom("Vin ENI Edition")
-//				.region(regionRepository.getReferenceById(3))
-//				.couleur(couleurRepository.getReferenceById(1))
-//				.build());
-//
-//		listeBouteilles.add(Bouteille
-//				.builder()
-//				.nom("Vin ENI Service")
-//				.region(regionRepository.getReferenceById(3))
-//				.couleur(couleurRepository.getReferenceById(2))
-//				.build());
-//
-//		listeBouteilles.add(Bouteille
-//				.builder()
-//				.nom("Vin ENI Ecole")
-//				.region(regionRepository.getReferenceById(2))
-//				.couleur(couleurRepository.getReferenceById(3))
-//				.build());
-//
-//		listeBouteilles.forEach(b -> {
-//			bouteilleRepository.save(b);
-//		});
-//	}
 
 	void insertion_Avis_DB() {
-		// Récupération depuis la base des Bouteille
-//		final List<Bouteille> listeBouteilles = bouteilleRepository.findAll();
-//		assertThat(listeBouteilles).isNotNull();
-//		assertThat(listeBouteilles).isNotEmpty();
-//		assertThat(listeBouteilles.size()).isEqualTo(3);
 
-
-
-		// Liste de BouteilleId
-		final List<BouteilleId> listeBouteillesId = new ArrayList<>();
-		listeBouteillesId.add(BouteilleId.builder()
-				.idBouteille(bouteilleRepository.findByNom("Vin ENI Edition").getId())
-				.idRegion(3)
-				.idCouleur(1)
-				.build());
-		listeBouteillesId.add(BouteilleId.builder()
-				.idBouteille(bouteilleRepository.findByNom("Vin ENI Ecole").getId())
-				.idRegion(2)
-				.idCouleur(3)
-				.build());
-		listeBouteillesId.add(BouteilleId.builder()
-				.idBouteille(bouteilleRepository.findByNom("Vin ENI Service").getId())
-				.idRegion(3)
-				.idCouleur(2)
-				.build());
+		profileRepository.deleteAll();
+		avisRepository.deleteAll();
 
 		// Liste de Client
 		final List<Profile> listeProfils = new ArrayList<>();
@@ -115,62 +66,54 @@ class DataPourRequetes {
 		// Ajout d'Avis par Profile sur chaque Bouteille
 		// Faire varier la note
 		int note = 2;
-		
-		
-		for (Profile c : listeProfils) {
+		int nbBouteilles = 9;
+
+		for (Profile profile : listeProfils) {
+			profileRepository.save(profile);
+
 			//Faire varier la date :
-			LocalDateTime ldf = LocalDateTime.of(2023, 7, 13, 15, 28);
+			LocalDateTime date = LocalDateTime.of(2023, 7, 13, 15, 28);
+
 			//Attention, en base l'heure sera en GMT (Heure Française - 2)
-
-			for (int i = 0; i < listeBouteillesId.size(); i++) {
-				final BouteilleId b = listeBouteillesId.get(i);
-
+			for (int i = 0; i < nbBouteilles; i++) {
+				final BouteilleId bouteilleId = BouteilleId.builder()
+						.idBouteille(i)
+						.idRegion(i)
+						.idCouleur(i)
+						.build();
 
 				// Faire varier la quantite du Profile selon la note
-				c.setQuantiteCommandee(c.getQuantiteCommandee() * note);
+				profile.setQuantiteCommandee(profile.getQuantiteCommandee() * note);
 				final Avis avis = Avis
 						.builder()
 						.note(note)
 						.commentaire("Commentaire (" + note + ")")
-						.id(b)
-						.client(c)
-						.date(ldf)
+						.id(bouteilleId)
+						.client(profile)
+						.date(date)
 						.build();
+
 				// Sauvegarde de Avis
 				avisRepository.save(avis);
 				// incrémenter la date
-				ldf = ldf.plusDays(10);
+				date = date.plusDays(10);
+				// incrémenter la note
+				note = ((note + 1) % 5) + 1;
 			}
-			// incrémenter la note
-			note++;
 		}
 	}
-
-//	@Test
-//	void test_insertion_DB() {
-//		insertion_Bouteille_DB();
-//		final List<Bouteille> listeBouteilles = bouteilleRepository.findAll();
-//		assertThat(listeBouteilles).isNotNull();
-//		assertThat(listeBouteilles).isNotEmpty();
-//		assertThat(listeBouteilles.size()).isEqualTo(3);
-//
-//		insertion_Avis_DB();
-//		final List<Avis> listeAvis = avisRepository.findAll();
-//		assertThat(listeAvis).isNotNull();
-//		assertThat(listeAvis).isNotEmpty();
-//		assertThat(listeAvis.size()).isEqualTo(9);
-//	}
 
 	@Test
 	void test_find_by_note_is_less_than(){
 		//A
 		insertion_Avis_DB();
 		//A
-		List<Avis> avisList = avisRepository.findAvisByNoteIsLessThan(5);
+		List<Avis> avisList = avisRepository.findAvisByNoteIsLessThan(3);
+
 		//A
 		assertNotNull(avisList);
-		assertEquals(3, avisList.size());
 		logger.info(avisList.toString());
+		assertEquals(3, avisList.size());
 	}
 
 	@Test
@@ -178,10 +121,10 @@ class DataPourRequetes {
 		//A
 		insertion_Avis_DB();
 		//A
-		List<Avis> avisList = avisRepository.findAvisByNoteIsGreaterThanEqual(4);
+		List<Avis> avisList = avisRepository.findAvisByNoteIsGreaterThanEqual(3);
 		//A
 		assertNotNull(avisList);
-		assertEquals(3, avisList.size());
+		assertEquals(6, avisList.size());
 		logger.info(avisList.toString());
 	}
 
@@ -189,14 +132,61 @@ class DataPourRequetes {
 	void test_find_avis_by_id(){
 		//A
 		insertion_Avis_DB();
-		//A
-		Avis avis = avisRepository.findAvisById(
+		BouteilleId id = BouteilleId.builder()
+				.idBouteille(2)
+				.idCouleur(2)
+				.idRegion(2)
+				.build();
 
-		);
+		//A
+		Avis avis = avisRepository.findAvisById(id);
+
 		//A
 		assertNotNull(avis);
 		logger.info(avis.toString());
 	}
 
+	@Test
+	void test_find_avis_by_client_pseudo(){
+		//A
+		insertion_Avis_DB();
+		String pseudo = "carlotentacule@email.fr";
 
+		//A
+		List<Avis> avis = avisRepository.findAvisByClient_Pseudo(pseudo);
+
+		//A
+		assertEquals(9, avis.size());
+		logger.info(avis.toString());
+	}
+
+	@Test
+	void test_find_avis_by_client_quantiteCommandee(){
+		//A
+		insertion_Avis_DB();
+		int quantiteCommandee = 75;
+
+		//A
+		List<Avis> avis = avisRepository.findAvisByClient_QuantiteCommandee(quantiteCommandee);
+
+		//A
+		assertEquals(1, avis.size());
+		logger.info(avis.toString());
+	}
+
+	@Test
+	void test_find_avis_by_client_date(){
+		//A
+		insertion_Avis_DB();
+
+		LocalDateTime dateBefore = LocalDateTime.of(2023, 7, 10, 0, 0);
+		LocalDateTime dateAfter = LocalDateTime.of(2023, 7, 15, 0, 0);
+
+		//A
+		List<Avis> avis = avisRepository.findAvisByDateBetween(dateBefore, dateAfter);
+
+		//A
+		logger.info(avis.toString());
+		assertEquals(1, avis.size());
+	}
 }
