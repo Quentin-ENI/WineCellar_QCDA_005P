@@ -24,3 +24,7 @@ spring:
 logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG
+
+app:
+  jwt:
+    secret: 507e4529683361722f2d3338763a5123483930335d75635c5746384631
