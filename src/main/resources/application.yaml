@@ -21,6 +21,10 @@ spring:
     database: Gestion_Avis
     authentication-database: admin
 
+app:
+  jwt:
+    secret: 546f6b7056734479323031265f592148623f6c3a3a3f7928707d475323
+
 logging:
   level:
     org.springframework.data.mongodb.core.MongoTemplate: DEBUG

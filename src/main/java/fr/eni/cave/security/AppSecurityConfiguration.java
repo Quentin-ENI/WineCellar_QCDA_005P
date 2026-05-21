@@ -1,39 +1,42 @@
-package fr.eni.cave.configuration;
+package fr.eni.cave.security;
 
+import jakarta.servlet.Filter;
+import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.provisioning.JdbcUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.sql.DataSource;
 
 @Configuration
 @EnableWebSecurity
+@AllArgsConstructor
 public class AppSecurityConfiguration {
 
     private static final Logger logger = LoggerFactory.getLogger(AppSecurityConfiguration.class);
 
-    @Bean
-    UserDetailsManager userDetailsManager(DataSource dataSource) {
-        JdbcUserDetailsManager jdbcUserDetailsManager = new JdbcUserDetailsManager(dataSource);
-        jdbcUserDetailsManager.setUsersByUsernameQuery("SELECT login, password, 1 FROM cav_user WHERE login = ?");
-        jdbcUserDetailsManager.setAuthoritiesByUsernameQuery("SELECT login, authority FROM cav_user WHERE login = ?");
-
-        return jdbcUserDetailsManager;
-    }
+    private Filter jwtAuthenticationFilter;
+    private AuthenticationProvider authenticationProvider;
 
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) {
         http.authorizeHttpRequests(auth -> auth
                 // ===== VISITEUR (public)
+                .requestMatchers(HttpMethod.POST, "/caveavin/auth").permitAll()
+
                 .requestMatchers(HttpMethod.GET, "/caveavin/bouteilles/**").permitAll()
+
 
                 // ===== CLIENT + OWNER
                 .requestMatchers(HttpMethod.GET, "/caveavin/paniers/**")
@@ -63,9 +66,14 @@ public class AppSecurityConfiguration {
                 .anyRequest().denyAll()
         );
 
-        http.httpBasic(Customizer.withDefaults());
-
         http.csrf(csrf -> csrf.disable());
+
+        http.authenticationProvider(authenticationProvider);
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+        http.sessionManagement(session -> {
+            session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        });
 
         return http.build();
     }
